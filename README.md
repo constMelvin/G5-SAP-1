@@ -99,6 +99,12 @@ npm run test:e2e
 
 Tests launch Vite automatically unless it is already serving port 5173. Failure traces and screenshots are saved in ignored `test-results/`.
 
+## Interface and theme
+
+The interface uses navy surfaces and blue accents, with a three-step getting-started guide, section navigation, a desktop toolbar that stays visible while scrolling, and the program editor first on mobile. Control signals expose explanations on hover or keyboard focus. Invalid memory fields are marked and linked to their error message.
+
+Customize the palette through the `:root` CSS variables in `src/styles.css`: `--primary` controls action buttons, `--accent` controls bus/signal highlights, and `--bg`/`--panel` control surfaces. Amber is reserved for halted/warning states; red identifies errors.
+
 ## Source map
 
 - `src/simulator/cpu.ts`: pure immutable machine transitions and formatted values.

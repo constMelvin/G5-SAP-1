@@ -92,6 +92,11 @@ export default function App() {
           </span>
           ARCHITECTURE LAB
         </div>
+        <nav className="quick-nav" aria-label="Workbench sections">
+          <a href="#program">Program</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#output">Output</a>
+        </nav>
         <div className="top-meta">
           <span>
             <i className="dot" />
@@ -102,11 +107,13 @@ export default function App() {
       </header>
       <section className="intro">
         <div>
-          <div className="eyebrow">Simple as possible. Made visible.</div>
+          <div className="eyebrow">
+            Your interactive computer architecture lab
+          </div>
           <h1>
             SAP-1 Workbench<span>.</span>
           </h1>
-          <p>Load a program. Follow the bits. See how a computer thinks.</p>
+          <p>Explore every register, every transfer, every clock cycle.</p>
         </div>
         <div className="intro-aside">
           <b>8-bit architecture</b>
@@ -114,6 +121,29 @@ export default function App() {
           16 bytes of possibility.
         </div>
       </section>
+      <ol className="workflow" aria-label="How to use the simulator">
+        <li className={!loaded ? "current" : ""}>
+          <span className="step-number">01</span>
+          <div>
+            <strong>Write your program</strong>
+            <small>Use the template or enter your own instructions.</small>
+          </div>
+        </li>
+        <li className={dirty ? "current" : ""}>
+          <span className="step-number">02</span>
+          <div>
+            <strong>Load into memory</strong>
+            <small>Enter data, then load your changes into RAM.</small>
+          </div>
+        </li>
+        <li className={loaded && !dirty ? "current" : ""}>
+          <span className="step-number">03</span>
+          <div>
+            <strong>Watch it execute</strong>
+            <small>Step through a cycle or run to the result.</small>
+          </div>
+        </li>
+      </ol>
       <section className="toolbar" aria-label="Simulator controls">
         <div className="control-group">
           {busy ? (
@@ -159,7 +189,7 @@ export default function App() {
           </button>
         </div>
         <label className="speed">
-          Clock
+          Speed
           <input
             aria-label="Clock speed"
             type="range"
@@ -182,6 +212,13 @@ export default function App() {
           <i className="dot" />
           {status}
         </span>
+        <p className="control-hint">
+          {!loaded
+            ? "Start with the program editor below. Load a program to enable Run, Step and Clock."
+            : cpu.halted
+              ? "Execution stopped. Reset to replay, or edit and load a new program."
+              : "Step instruction completes one instruction · Clock advances one microcycle · Reset restores loaded memory."}
+        </p>
       </section>
       {(model.notice || message) && (
         <div className="notice" role="status">

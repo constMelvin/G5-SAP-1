@@ -77,7 +77,11 @@ export default function Architecture({ cpu }: { cpu: CpuState }) {
     : (cpu.a + (subtract ? -cpu.b : cpu.b)) & 255;
   return (
     <div className="center-column">
-      <section className="panel" aria-label="SAP-1 architecture">
+      <section
+        className="panel"
+        id="architecture"
+        aria-label="SAP-1 architecture"
+      >
         <div className="panel-head">
           <h2>
             <CircuitBoard />
@@ -241,6 +245,8 @@ export default function Architecture({ cpu }: { cpu: CpuState }) {
             <span
               key={name}
               title={label}
+              tabIndex={0}
+              data-description={label}
               aria-label={
                 label +
                 ": " +
@@ -253,7 +259,7 @@ export default function Architecture({ cpu }: { cpu: CpuState }) {
           ))}
         </div>
         <p className="signal-note">
-          Highlighted signals are logically asserted. Hover for their function.
+          Blue signals are active. Hover or focus a signal to read its function.
         </p>
       </section>
     </div>

@@ -10,7 +10,7 @@ export default function Output({
 }) {
   return (
     <aside className="right-column">
-      <section className="panel" aria-label="Output display">
+      <section className="panel" id="output" aria-label="Output display">
         <div className="panel-head">
           <h2>
             <Lightbulb />

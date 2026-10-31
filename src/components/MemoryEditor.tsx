@@ -27,12 +27,13 @@ export default function MemoryEditor({
   return (
     <section
       className="panel memory-panel"
+      id="program"
       aria-label="Program and memory editor"
     >
       <div className="panel-head">
         <h2>
           <Braces />
-          Program memory
+          Program & memory
         </h2>
         <span className="badge">16 × 8</span>
       </div>
@@ -55,7 +56,7 @@ export default function MemoryEditor({
         </button>
       </div>
       <p className="memory-hint">
-        Enter instructions, hex bytes or 8 binary bits.
+        Hex bytes, 8 binary bits, or instructions.
         <br />
         Template: enter your data at 09, 0A and 0B.
       </p>
@@ -64,7 +65,7 @@ export default function MemoryEditor({
           <tr>
             <th scope="col">ADDR</th>
             <th scope="col">DRAFT / INPUT</th>
-            <th scope="col">RAM</th>
+            <th scope="col">LOADED</th>
           </tr>
         </thead>
         <tbody>
@@ -80,6 +81,14 @@ export default function MemoryEditor({
               <td>
                 <input
                   aria-label={"Memory " + hex(index)}
+                  aria-invalid={
+                    error.startsWith("Address " + hex(index) + ":") || undefined
+                  }
+                  aria-describedby={
+                    error.startsWith("Address " + hex(index) + ":")
+                      ? "memory-error"
+                      : undefined
+                  }
                   value={cell}
                   disabled={busy}
                   placeholder={index >= 9 && index <= 11 ? "data · hex" : "00"}
@@ -101,7 +110,7 @@ export default function MemoryEditor({
           <span>HEX / BIN</span>
         </div>
         {error && (
-          <div className="error-message" role="alert">
+          <div className="error-message" id="memory-error" role="alert">
             {error}
           </div>
         )}

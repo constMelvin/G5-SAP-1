@@ -1,5 +1,11 @@
 # Verification record — 2026-10-31
 
+## Blue interface refresh
+
+Replaced the green palette with centralized navy/blue color variables. Added section navigation, a three-step guide, a desktop sticky toolbar, larger register values and touch targets, mobile editor-first ordering, keyboard signal explanations, and accessible invalid-field associations. CPU and playback logic were not changed.
+
+Validation: production build and all 8 browser tests passed. Desktop/mobile screenshots inspected. Additional browser checks passed at widths 320, 768 and 1440 with no horizontal page overflow; section navigation, keyboard-triggered signal tooltips and invalid-field labels work. Regenerated the three-calculation video with the blue interface; all three expected outputs were asserted by the recording script.
+
 ## Result
 - Production build: `npm run build` passed (TypeScript and Vite).
 - Unit tests: `npm test` — 39 passed.
