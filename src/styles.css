@@ -1381,3 +1381,19 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* Three workspaces share the same CPU state and accessible controls. */
+.design-picker { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:22px 0; border-top:1px solid var(--line); }
+.design-picker p { margin:6px 0 0; color:var(--text-soft); font-size:13px; }
+.design-options { display:flex; gap:10px; }
+.design-option { text-align:left; gap:12px; padding:12px 14px; min-width:205px; background:var(--panel); }
+.design-option.selected { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.design-option strong,.design-option small { display:block; }
+.design-option small { color:var(--muted); margin-top:5px; font-size:10px; font-weight:400; }
+.design-number { margin-left:auto; font:10px var(--mono); color:var(--muted); }
+.design-swatch { width:12px; height:28px; border-radius:3px; background:#80b7ff; flex-shrink:0; }
+.design-swatch.pink { background:#db2777; }
+.design-swatch.blue { background:#2563eb; }
+@media(max-width:1150px) { .design-picker { align-items:flex-start; flex-direction:column; gap:16px; } .design-options { width:100%; } .design-option { flex:1; min-width:0; } }
+@media(max-width:650px) { .design-options { flex-direction:column; } .design-option { width:100%; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }

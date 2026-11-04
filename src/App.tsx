@@ -6,11 +6,13 @@ import {
   SkipForward,
   RotateCcw,
   Timer,
-  ArrowUpRight,
+
 } from "lucide-react";
 import Architecture from "./components/Architecture";
 import MemoryEditor from "./components/MemoryEditor";
 import Output from "./components/Output";
+import Toast from "./components/Toast";
+import HelpMenu from "./components/HelpMenu";
 import { initialPlayback, playbackReducer } from "./simulator/playback";
 import { instructionTemplate, parseProgram } from "./simulator/program";
 
@@ -18,14 +20,24 @@ export default function App() {
   const [model, dispatch] = useReducer(playbackReducer, undefined, () =>
     initialPlayback(),
   );
-  const [cells, setCells] = useState<string[]>(Array(16).fill(""));
+  const [cells, setCells] = useState<string[]>(instructionTemplate);
   const [loadedCells, setLoadedCells] = useState<string[]>(Array(16).fill(""));
   const [loadedMemory, setLoadedMemory] = useState<number[]>(Array(16).fill(0));
   const [loaded, setLoaded] = useState(false);
-  const [speed, setSpeed] = useState(4);
+  const [speed, setSpeed] = useState(1);
+  const [design, setDesign] = useState("blue");
+  useEffect(() => {
+    document.documentElement.dataset.design = design;
+    return () => { delete document.documentElement.dataset.design; };
+  }, [design]);
   const [inputError, setInputError] = useState("");
   const [message, setMessage] = useState("");
-  const { cpu, mode, trace } = model;
+  useEffect(() => {
+    if (!message) return;
+    const timer = window.setTimeout(() => setMessage(""), 4500);
+    return () => window.clearTimeout(timer);
+  }, [message]);
+  const { cpu, mode } = model;
   const busy = mode !== "idle";
   const dirty = cells.some((cell, index) => cell !== loadedCells[index]);
   const status = cpu.error
@@ -90,13 +102,10 @@ export default function App() {
           <span className="brand-icon">
             <Cpu />
           </span>
-          ARCHITECTURE LAB
+          <span>{design === "pink" ? "LIFE IN BITS" : "IT’S BIT TIME!"}</span>
+          <span className="brand-machine">SAP-1</span>
         </div>
-        <nav className="quick-nav" aria-label="Workbench sections">
-          <a href="#program">Program</a>
-          <a href="#architecture">Architecture</a>
-          <a href="#output">Output</a>
-        </nav>
+        <div className="compact-themes" aria-label="Workspace theme">{[ ["blue", "Ben 10"], ["pink", "Barbie"] ].map(([id, name]) => <button key={id} aria-pressed={design === id} onClick={() => setDesign(id)}>{name}</button>)}</div>
         <div className="top-meta">
           <span>
             <i className="dot" />
@@ -104,46 +113,9 @@ export default function App() {
           </span>
           <span>GROUP 05 / SAP-1</span>
         </div>
+      <HelpMenu />
       </header>
-      <section className="intro">
-        <div>
-          <div className="eyebrow">
-            Your interactive computer architecture lab
-          </div>
-          <h1>
-            SAP-1 Workbench<span>.</span>
-          </h1>
-          <p>Explore every register, every transfer, every clock cycle.</p>
-        </div>
-        <div className="intro-aside">
-          <b>8-bit architecture</b>
-          <br />
-          16 bytes of possibility.
-        </div>
-      </section>
-      <ol className="workflow" aria-label="How to use the simulator">
-        <li className={!loaded ? "current" : ""}>
-          <span className="step-number">01</span>
-          <div>
-            <strong>Write your program</strong>
-            <small>Use the template or enter your own instructions.</small>
-          </div>
-        </li>
-        <li className={dirty ? "current" : ""}>
-          <span className="step-number">02</span>
-          <div>
-            <strong>Load into memory</strong>
-            <small>Enter data, then load your changes into RAM.</small>
-          </div>
-        </li>
-        <li className={loaded && !dirty ? "current" : ""}>
-          <span className="step-number">03</span>
-          <div>
-            <strong>Watch it execute</strong>
-            <small>Step through a cycle or run to the result.</small>
-          </div>
-        </li>
-      </ol>
+
       <section className="toolbar" aria-label="Simulator controls">
         <div className="control-group">
           {busy ? (
@@ -193,12 +165,13 @@ export default function App() {
           <input
             aria-label="Clock speed"
             type="range"
-            min="1"
+            min="0.5"
+            step="0.5"
             max="20"
             value={speed}
             onChange={(event) => setSpeed(Number(event.target.value))}
           />
-          <output>{speed} Hz</output>
+          <output>{speed} Hz · {(1 / speed).toFixed(2)}s / clock</output>
         </label>
         <span
           role="status"
@@ -217,25 +190,14 @@ export default function App() {
             ? "Start with the program editor below. Load a program to enable Run, Step and Clock."
             : cpu.halted
               ? "Execution stopped. Reset to replay, or edit and load a new program."
-              : "Step instruction completes one instruction · Clock advances one microcycle · Reset restores loaded memory."}
+              : "Step instruction completes one instruction Â· Clock advances one microcycle Â· Reset restores loaded memory."}
         </p>
       </section>
-      {(model.notice || message) && (
-        <div className="notice" role="status">
-          {model.notice || message}
-        </div>
-      )}
-      {cpu.error && (
-        <div className="error-message" role="alert">
-          {cpu.error}
-        </div>
-      )}
-      {dirty && loaded && (
-        <div className="notice">
-          Your draft has changes. Execution uses the RAM column until you click
-          Load program.
-        </div>
-      )}
+      <div className="toast-stack">
+        {(model.notice || message) && <Toast key={model.notice || message} message={model.notice || message} />}
+        {cpu.error && <Toast key={cpu.error} message={cpu.error} error />}
+        {dirty && loaded && <Toast key="draft-changed" message="Draft changed. Execution uses loaded RAM until you click Load program." />}
+      </div>
       <main className="workbench">
         <MemoryEditor
           cells={cells}
@@ -246,14 +208,10 @@ export default function App() {
           error={inputError}
           onChange={edit}
           onTemplate={() => {
-            setCells((previous) => {
-              const next = [...previous];
-              next.splice(0, 5, ...instructionTemplate().slice(0, 5));
-              return next;
-            });
+            setCells(instructionTemplate());
             setInputError("");
             setMessage(
-              "Instructions inserted at 00–04. Enter your three data values at 09, 0A and 0B, then Load program.",
+              "Sample instructions and data (25H, 05H, 23H) inserted. Click Load program to begin.",
             );
           }}
           onClear={() => {
@@ -265,60 +223,10 @@ export default function App() {
           }}
           onLoad={load}
         />
-        <Architecture cpu={cpu} />
-        <Output cpu={cpu} trace={trace} />
+        <Architecture cpu={cpu} design={design} speed={speed} />
+        <Output cpu={cpu} />
       </main>
-      <details className="panel reference">
-        <summary>
-          Instruction reference & getting started{" "}
-          <ArrowUpRight
-            size={12}
-            style={{ verticalAlign: "middle", marginLeft: 5 }}
-          />
-        </summary>
-        <div className="reference-grid">
-          {[
-            ["LDA", "0000", "Load a memory byte into the accumulator."],
-            ["ADD", "0001", "Add a memory byte to the accumulator."],
-            ["SUB", "0010", "Subtract a memory byte using two’s complement."],
-            ["OUT", "1110", "Copy the accumulator to the output LEDs."],
-            ["HLT", "1111", "Stop the clock and hold all values."],
-          ].map(([name, opcode, description]) => (
-            <div key={name} className="reference-item">
-              <strong>{name}</strong>
-              <code>{opcode}</code>
-              <p>{description}</p>
-            </div>
-          ))}
-        </div>
-        <div className="help-text">
-          <p>
-            <strong>Start here:</strong> Insert the instruction template, type
-            your own values at 09, 0A and 0B, then click Load program. The
-            template computes A + B − C. For the assignment example, manually
-            enter 25H, 05H and 23H; expect 07H.
-          </p>
-          <p>
-            <strong>Input:</strong> Bare numbers are hexadecimal: 25 means 25H
-            (37 decimal). Use 0x25 or 25H for clarity. Binary is exactly eight
-            bits, such as 00100101 or 0010 0101. Blank cells load as 00. LDA,
-            ADD and SUB take one address from 0 to F.
-          </p>
-          <p>
-            <strong>Controls:</strong> Clock advances one T-state. Step
-            instruction plays the remaining cycles of one instruction. Run
-            continues until HLT, an error, Pause, or a 256-instruction safety
-            pause. Reset zeros registers and restores the last loaded program.
-            Clear draft affects only the editor.
-          </p>
-          <p>
-            <strong>Timing:</strong> T1–T3 fetch; T4–T6 execute, with HLT
-            stopping at T4. Inactive cycles preserve registers. Signal
-            highlights represent logical activation, not physical pin polarity.
-            Eight-bit arithmetic wraps modulo 256. The PC wraps from FH to 0H.
-          </p>
-        </div>
-      </details>
+
       <footer>
         <span>BUILT TO UNDERSTAND, ONE CLOCK AT A TIME.</span>
         <span>SAP-1 / COMPUTER ARCHITECTURE & ORGANIZATION</span>

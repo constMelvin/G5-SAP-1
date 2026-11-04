@@ -33,7 +33,7 @@ describe("program input", () => {
     expect(cells[9]).toBe("invalid");
   });
   it("requires 16 rows", () => expect(() => parseProgram(["00"])).toThrow());
-  it("supplies only instructions, not sample operands", () => {
+  it("supplies instructions with the default hexadecimal operands", () => {
     const cells = instructionTemplate();
     expect(cells.slice(0, 5)).toEqual([
       "LDA 9H",
@@ -42,8 +42,7 @@ describe("program input", () => {
       "OUT",
       "HLT",
     ]);
-    expect(cells[9]).toBe("");
-    expect(cells[10]).toBe("");
-    expect(cells[11]).toBe("");
+    expect(cells.slice(9, 12)).toEqual(["25H", "05H", "23H"]);
+    expect(parseProgram(cells).slice(9, 12)).toEqual([0x25, 0x05, 0x23]);
   });
 });

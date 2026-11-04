@@ -1,0 +1,30 @@
+/* The CPU itself is the game map; every delivery follows the real bus. */
+.mission-console{display:flex;gap:14px;align-items:flex-start;padding:18px;margin-bottom:20px;background:var(--accent-dim);border:1px solid var(--line);border-radius:14px}.mission-emblem{display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--primary);color:white;font:800 21px var(--display);border:3px solid var(--panel)}.mission-kicker{font:600 9px var(--mono);letter-spacing:1px;color:var(--text-soft)}.mission-console h3{font:600 17px var(--display);margin:6px 0}.mission-console p{font-size:12px;line-height:1.6;color:var(--text-soft);margin:0}:root[data-design="pink"] .mission-emblem{font:bold italic 28px Georgia,serif}.mission-console>div{min-width:0}
+:root[data-design="blue"]{--accent:#236323;--accent-bright:#194d1a;--primary:#286c28;--primary-hover:#19521d;--glow:#78e32f55;--led-lit:#86ef35}
+:root[data-design="pink"]{--bg:#fff0f8;--accent:#b51268;--accent-bright:#9c105a;--primary:#c21675;--primary-hover:#a00f60;--raised:#ffe1f1;--accent-dim:#ffd3eb;--glow:#ff58b760;--rim:#e5a1c5}
+:root[data-design="blue"] #architecture .panel-head{background:linear-gradient(115deg,#12334d,#162f26);color:#d5ff9d}
+:root[data-design="blue"] #architecture .panel-head h2{color:#d5ff9d}
+:root[data-design="blue"] .architecture-stage .register{border-top:5px solid #93e348;border-radius:14px 3px 14px 3px}
+:root[data-design="blue"] .architecture-stage .diagram-wrapper{border-color:#244d40;background-color:#dcebf5;box-shadow:5px 10px 0 #244d40,10px 18px 24px #244d4033}
+:root[data-design="pink"] #architecture .panel-head{background:linear-gradient(110deg,#ffe0f1,#fff7fc);border-bottom:2px solid #ef9ac8}
+:root[data-design="pink"] #architecture .panel-head h2{font-style:italic;color:#ac125f}
+:root[data-design="pink"] .architecture-stage .register{border-top:4px solid #ee7bb5;border-radius:18px;box-shadow:3px 6px 0 #edb2d2,5px 10px 12px #c2167522}
+:root[data-design="pink"] .architecture-stage .diagram-wrapper{background-image:radial-gradient(circle,#ffffff 2px,transparent 3px),linear-gradient(135deg,#ffe3f2,#fbd3ec);background-size:24px 24px,100% 100%;border-color:#d989b4;border-radius:24px}
+.alien-token{display:block;width:22px;height:22px;background:#a2f13e;border:3px solid #142a20;border-radius:50%;position:relative}.alien-token:after{content:"";position:absolute;inset:2px;background:#142a20;clip-path:polygon(0 0,100% 0,65% 50%,100% 100%,0 100%,35% 50%)}
+.dream-token{font:bold italic 25px Georgia,serif;color:white;text-shadow:1px 2px 0 #91114c}
+:root[data-design="pink"] .board-courier>span{border-radius:50%;background:#d62b88;box-shadow:0 0 0 3px #ffb7de,0 0 16px #ff8bce}
+.design-swatch.blue{background:linear-gradient(135deg,#cae5ff 50%,#89db3d 50%)}.design-swatch.pink{background:linear-gradient(135deg,#ffe3f3 50%,#e52a91 50%)}
+.architecture-stage .diagram{position:relative;isolation:isolate}
+.architecture-stage .diagram-wrapper{background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);background-size:24px 24px}
+.architecture-stage .register{border-radius:12px 12px 5px 5px;border-top:4px solid var(--accent);background:linear-gradient(135deg,var(--panel),var(--raised))}
+.station-name{font:600 9px/1.3 var(--mono);color:var(--accent);letter-spacing:.4px;position:relative;z-index:1}
+.board-courier{position:absolute;left:var(--to-x);top:var(--to-y);transform:translate(-50%,-65%);z-index:10;pointer-events:none;display:grid;justify-items:center;filter:drop-shadow(2px 4px 2px var(--shadow))}
+.board-courier>span{display:grid;place-items:center;width:34px;height:30px;background:var(--primary);color:var(--on-primary);border:2px solid var(--panel);border-radius:9px 9px 4px 4px;box-shadow:0 0 0 1px var(--accent)}
+.board-courier svg{width:23px;height:23px}.board-courier small{font:700 9px var(--mono);background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:4px;padding:2px 4px;margin-top:2px}
+.board-courier.travelling{animation:board-delivery .65s ease-in-out both}
+@keyframes board-delivery{0%{left:var(--from-x);top:var(--from-y)}30%{left:50%;top:var(--from-y)}70%{left:50%;top:var(--to-y)}100%{left:var(--to-x);top:var(--to-y)}}
+.architecture-stage .wbus{background:repeating-linear-gradient(to bottom,var(--accent) 0 8px,var(--panel) 8px 13px);width:8px;border-radius:8px}
+.architecture-stage .register.active{outline:2px solid var(--accent);outline-offset:4px}
+.cycle.active{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent)}
+@media(prefers-reduced-motion:reduce){.board-courier.travelling{animation:none}}
+@media(max-width:760px){.station-name{font-size:8px}.board-courier>span{width:28px;height:26px}.board-courier svg{width:20px;height:20px}}

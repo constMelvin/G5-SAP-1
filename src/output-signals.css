@@ -1,0 +1,14 @@
+/* Bit colors are consistent across both character themes. */
+.board-caption .completion-label{display:inline-flex;align-items:center;padding:4px 8px;background:var(--primary);color:var(--on-primary);border-radius:6px;font-weight:700;letter-spacing:.5px}
+:root[data-design] .board-courier.courier-stopped{transform:translate(-50%,-40%);z-index:15}
+:root[data-design] .board-courier.courier-stopped>span{display:grid;place-items:center;width:32px;height:32px;border:2px solid var(--panel);border-radius:8px;background:var(--primary);color:var(--on-primary);box-shadow:0 0 0 1px var(--primary),0 3px 6px var(--shadow)}
+:root[data-design] .board-courier.courier-stopped>span>svg{width:21px;height:21px;stroke-width:2.5}
+:root[data-design] .board-courier.courier-stopped small{font:700 10px/1.3 var(--mono);padding:3px 7px;background:var(--primary);color:var(--on-primary);border:1px solid var(--panel);border-radius:5px;white-space:nowrap}
+:root[data-design] #output .led.omnitrix-led{width:100%;max-width:32px;height:auto;aspect-ratio:40/48;background:none;border:0;border-radius:0;box-shadow:none;overflow:visible;margin-inline:auto}
+.omnitrix-led svg{display:block;width:100%;height:100%;overflow:visible}.omnitrix-led.off{--dial:#ff575e;--dial-rim:#ffafb0;--dial-glow:#ff354d66}.omnitrix-led.on{--dial:#9df543;--dial-rim:#daffac;--dial-glow:#8afa4566}
+.omnitrix-led .omnitrix-lens{fill:var(--dial);stroke:var(--dial-rim);stroke-width:1.5}.omnitrix-markers{fill:var(--dial)}
+:root[data-design="blue"] #output .led-state{color:#ffb4b4}:root[data-design="blue"] #output .led-state.lit{color:#b3f793}
+:root[data-design="pink"] #output .led-state{color:#a51e30}:root[data-design="pink"] #output .led-state.lit{color:#236729}
+:root[data-design="blue"] .board-courier>span{width:38px;height:38px;background:transparent;border:0;box-shadow:none;overflow:visible}
+:root[data-design="blue"] .board-courier .omnitrix-token{width:38px;height:38px;filter:drop-shadow(0 0 3px #85e63c88)}
+

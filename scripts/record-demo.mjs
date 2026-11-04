@@ -1,5 +1,5 @@
 import { chromium } from "@playwright/test";
-import { mkdir, rename } from "node:fs/promises";
+import { mkdir, copyFile, unlink } from "node:fs/promises";
 await mkdir("docs/demo", { recursive: true });
 const browser = await chromium.launch({
   channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
@@ -21,9 +21,10 @@ try {
   await page.getByLabel("Clock speed").fill("8");
   for (const values of [
     ["25H", "05H", "23H", "07"],
-    ["12H", "08H", "05H", "15"],
-    ["40H", "10H", "20H", "30"],
+    ["0AH", "08H", "03H", "0F"],
+    ["14H", "0AH", "05H", "19"],
   ]) {
+    await page.getByRole("button", { name: values[3] === "0F" ? /Rose Pink/ : /Sky Blue/ }).click();
     for (const [index, address] of ["09", "0A", "0B"].entries()) {
       const input = page.getByRole("textbox", { name: "Memory " + address });
       await input.fill("");
@@ -40,7 +41,16 @@ try {
       .waitFor();
     const result = await page.getByTestId("output-hex").textContent();
     if (result !== values[3]) throw new Error("Unexpected output: " + result);
-    await page.waitForTimeout(2400);
+    const expectedBits = parseInt(values[3], 16).toString(2).padStart(8, "0");
+    const litCount = await page.locator(".led.on").count();
+    if (litCount !== [...expectedBits].filter(bit => bit === "1").length)
+      throw new Error("LED count does not match output");
+    await page.locator("#output").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1800);
+    await page.getByRole("region", { name: "Live calculations" }).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(2200);
+    console.log(`Verified ${values.slice(0, 3).join(" +/− ")} → ${values[3]}H (${expectedBits})`);
+    await page.getByRole("button", { name: /Sky Blue/ }).scrollIntoViewIfNeeded();
   }
   await page.getByRole("button", { name: "Reset", exact: true }).click();
   await page.waitForTimeout(1000);
@@ -48,5 +58,7 @@ try {
   await context.close();
   await browser.close();
 }
-await rename(await video.path(), "docs/demo/three-calculations.webm");
+const capturePath = await video.path();
+await copyFile(capturePath, "docs/demo/three-calculations.webm");
+await unlink(capturePath);
 console.log("Recorded docs/demo/three-calculations.webm");

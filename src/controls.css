@@ -1,0 +1,9 @@
+/* Stable borders: hover changes fill, keyboard focus remains explicit. */
+.brand-machine{font:600 10px var(--mono);letter-spacing:1px;padding:4px 6px;border:1px solid var(--line);border-radius:5px;color:var(--text-soft);white-space:nowrap}
+:root[data-design] button{border:1px solid var(--line);box-shadow:0 1px 2px var(--shadow);transition:background-color .15s,color .15s,box-shadow .15s}
+:root[data-design] button:not(:disabled):hover{border-color:var(--line);background:var(--accent-dim);box-shadow:0 1px 3px var(--shadow)}
+:root[data-design] button.primary,:root[data-design] button[aria-pressed="true"]{border-color:var(--primary);background:var(--primary);color:var(--on-primary)}
+:root[data-design] button.primary:not(:disabled):hover,:root[data-design] button[aria-pressed="true"]:not(:disabled):hover{border-color:var(--primary);background:var(--primary-hover);color:var(--on-primary)}
+:root[data-design] button:not(:disabled):active{transform:none;box-shadow:inset 0 1px 3px var(--shadow)}
+:root[data-design] button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){:root[data-design] button{transition:none}}

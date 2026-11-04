@@ -1,13 +1,7 @@
-import { Lightbulb, List } from "lucide-react";
+import { Lightbulb } from "lucide-react";
+import DreamIcon from "./DreamIcon";
 import { binary, hex, type CpuState } from "../simulator/cpu";
-import type { TraceEntry } from "../simulator/playback";
-export default function Output({
-  cpu,
-  trace,
-}: {
-  cpu: CpuState;
-  trace: TraceEntry[];
-}) {
+export default function Output({ cpu }: { cpu: CpuState }) {
   return (
     <aside className="right-column">
       <section className="panel" id="output" aria-label="Output display">
@@ -19,6 +13,7 @@ export default function Output({
           <span className="panel-index">OUT</span>
         </div>
         <div className="output-body">
+          <div className="display-bezel" aria-hidden="true"><i /><span>8-BIT OUTPUT MODULE</span><i /></div>
           <span className="output-label">HEXADECIMAL</span>
           <div
             className="big-output"
@@ -29,15 +24,34 @@ export default function Output({
           </div>
           <div
             className="led-row"
+            role="img"
             aria-label={"Binary output " + binary(cpu.out)}
           >
             {binary(cpu.out)
               .split("")
               .map((bit, index) => (
-                <div key={index} className="led-bit">
-                  <div className={"led" + (bit === "1" ? " on" : "")} />
+                <div key={index} className="led-bit" aria-label={"D" + (7-index) + ": " + (bit === "1" ? "ON" : "OFF")}>
+                  <div className={"led omnitrix-led" + (bit === "1" ? " on" : " off")}>
+                    <svg viewBox="0 0 40 48" aria-hidden="true">
+                      <path d="M13 1h14l3 11v24l-3 11H13l-3-11V12Z" fill="#26372e" stroke="#0b1812" strokeWidth="2" />
+                      <circle cx="20" cy="24" r="18" fill="#15241c" stroke="#82988a" strokeWidth="2" />
+                      <circle className="omnitrix-lens" cx="20" cy="24" r="13" />
+                      <path d="M11 14h18l-6 10 6 10H11l6-10Z" fill="#102017" />
+                      <path d="M12 10a16 16 0 0 1 16 0" fill="none" stroke="#fff" strokeOpacity=".6" strokeWidth="2" />
+                      <g className="omnitrix-markers"><circle cx="20" cy="7" r="1.5" /><circle cx="37" cy="24" r="1.5" /><circle cx="20" cy="41" r="1.5" /><circle cx="3" cy="24" r="1.5" /></g>
+                    </svg>
+                    <svg className="barbie-bit-icon" viewBox="0 0 40 48" aria-hidden="true">
+                      <path d="M12 3h16l5 7-3 8H10l-3-8Z" fill="#f7bddc" stroke="#a64b7e" strokeWidth="1.5" />
+                      <path d="m10 10 5-7 5 7 5-7 5 7M10 10h20l-10 8Z" fill="none" stroke="#fff5fc" strokeWidth="1.5" />
+                      <circle cx="20" cy="30" r="15" fill="#fff0f9" stroke="#d084ad" strokeWidth="2" />
+                      <circle className="omnitrix-lens" cx="20" cy="30" r="11" />
+                      <g transform="translate(9 19) scale(.55)" color="#c21875"><DreamIcon /></g>
+                      <path d="m34 18 1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5Z" fill="#b7518c" />
+                    </svg>
+                  </div>
                   <span>D{7 - index}</span>
                   <span className="bit-value">{bit}</span>
+                  <small className={"led-state " + (bit === "1" ? "lit" : "")}>{bit === "1" ? "ON" : "OFF"}</small>
                 </div>
               ))}
           </div>
@@ -53,36 +67,6 @@ export default function Output({
             Latched by OUT. The LEDs retain their value until the next OUT or
             Reset.
           </p>
-        </div>
-      </section>
-      <section className="panel" aria-label="Execution trace">
-        <div className="panel-head">
-          <h2>
-            <List />
-            Execution trace
-          </h2>
-          <span className="badge">LATEST FIRST</span>
-        </div>
-        <div className="trace">
-          {!trace.length ? (
-            <p className="trace-empty">
-              Every clock has a story.
-              <br />
-              Load your program and press Clock, Step instruction or Run to see
-              it here.
-            </p>
-          ) : (
-            trace.map((entry) => (
-              <div key={entry.clock} className="trace-entry">
-                <b>T{entry.phase}</b>
-                <div>
-                  {entry.description}
-                  <br />
-                  <span>Clock {entry.clock}</span>
-                </div>
-              </div>
-            ))
-          )}
         </div>
       </section>
     </aside>

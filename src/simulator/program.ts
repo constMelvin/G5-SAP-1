@@ -36,5 +36,6 @@ export function parseProgram(cells: string[]): number[] {
 export function instructionTemplate(): string[] {
   const cells = Array<string>(16).fill("");
   cells.splice(0, 5, "LDA 9H", "ADD AH", "SUB BH", "OUT", "HLT");
+  cells.splice(9, 3, "25H", "05H", "23H");
   return cells;
 }

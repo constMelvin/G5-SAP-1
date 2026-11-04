@@ -7,7 +7,7 @@ A graphical SAP-1 computer simulator for Computer Architecture and Organization.
 Use **Node.js 24 LTS** and npm (Node 22.12+ is also supported).
 
 ```powershell
-npm install
+npm ci
 npm run dev
 ```
 
@@ -24,7 +24,7 @@ Build output is in `dist/`. Preview serves the production build. Simulation runs
 
 ## First calculation
 
-1. Click **Instruction template**. This inserts instructions only:
+1. Click **Instruction template**. This fills the sample instructions and data:
    - 00: LDA 9H
    - 01: ADD AH
    - 02: SUB BH
@@ -35,7 +35,7 @@ Build output is in `dist/`. Preview serves the production build. Simulation runs
 4. Click **Run**, or use **Clock** and **Step instruction**.
 5. At HLT the output is **07H**, binary **00000111**.
 
-Operand values are always entered through the editor. The template does not preload example data.
+The template preloads 25H, 05H and 23H at 09, 0A and 0B. Edit these values in the draft to try another calculation, then load again.
 
 ## Controls and input
 
@@ -47,7 +47,7 @@ Operand values are always entered through the editor. The template does not prel
 | Run / Pause      | Execute continuously / stop at current microcycle                |
 | Reset            | Stop timers, zero registers/counters, restore last loaded memory |
 | Clear draft      | Clear editor only; does not alter loaded RAM                     |
-| Clock slider     | 1–20 microcycles per second                                      |
+| Clock slider     | 0.5–20 microcycles per second                                      |
 
 Bare numbers are **hexadecimal**, not decimal. Accepted examples: `25`, `25H`, `0x25`, `00100101`, `0010 0101`, `0b00100101`, `LDA 9H`. Blank cells become 00. Binary requires exactly eight bits. Instruction addresses range from 0 to F. The RAM column always shows what the CPU will execute; edits do not apply until loaded. Validation failures preserve the current RAM and CPU state.
 
@@ -97,13 +97,35 @@ $env:PLAYWRIGHT_CHANNEL = 'msedge'
 npm run test:e2e
 ```
 
-Tests launch Vite automatically unless it is already serving port 5173. Failure traces and screenshots are saved in ignored `test-results/`.
+Tests launch Vite automatically unless it is already serving port 5173. Failure traces and screenshots are saved in ignored `test-results/`. Custom `test-results-*` directories and `playwright-report/` are ignored too. Browser tests include live arithmetic history and confirm that LEDs latch only on OUT.
 
-## Interface and theme
+## Interface and themes
 
-The interface uses navy surfaces and blue accents, with a three-step getting-started guide, section navigation, a desktop toolbar that stays visible while scrolling, and the program editor first on mobile. Control signals expose explanations on hover or keyboard focus. Invalid memory fields are marked and linked to their error message.
+Choose **Sky Blue** (default) or **Rose Pink**. Both are light themes; changing the palette preserves your loaded program, registers and playback. The architecture uses a fixed CSS perspective board with visible chip sides, edge pins and highlighted W-Bus transfers. It is a browser-based register-transfer visualization with CSS depth effects, not a rotatable WebGL or gate-level electronics model.
 
-Customize the palette through the `:root` CSS variables in `src/styles.css`: `--primary` controls action buttons, `--accent` controls bus/signal highlights, and `--bg`/`--panel` control surfaces. Amber is reserved for halted/warning states; red identifies errors.
+- Graphical PC, MAR, RAM, IR, accumulator, ALU, B and output modules display live values.
+- Raised native buttons provide Run/Pause, Step instruction, Clock, Reset and Load program.
+- Eight green output LEDs show bits D7 through D0, left to right, with binary values and ON/OFF labels. Read the bit values and ON/OFF labels to distinguish each output state.
+- The live calculation panel shows the latest ADD/SUB, plus the accumulator in hexadecimal, decimal and binary.
+- Calculation history lists arithmetic and OUT events within the latest **80 clocks** of the current run. Older events expire; Reset, Load and page refresh clear the history.
+- Output LEDs latch only when **OUT** executes. Intermediate arithmetic changes the accumulator without changing the output LEDs.
+- A three-step guide, section navigation and sticky desktop controls help navigation. Mobile layouts stack the panels; keyboard focus, input error messages and reduced-motion support are included.
+
+`src/styles.css` defines the base layout. `src/hardware.css`, loaded afterward, defines the light palettes, depth effects and LEDs. Customize its semantic CSS variables such as `--primary`, `--accent`, `--bg` and `--panel`. The pink palette overrides the default blue tokens through `:root[data-design="pink"]`; output LEDs stay green independently of the palette.
+
+## More calculations and troubleshooting
+
+Keep the instruction template at addresses 00–04. Enter each set below at **09**, **0A** and **0B**, then click **Load program → Run**:
+
+| Data at 09 | Data at 0A | Data at 0B | Calculation (decimal) | Output | Lit LEDs |
+| --- | --- | --- | --- | --- | --- |
+| 25H | 05H | 23H | 37 + 5 − 35 = 7 | 07H / 00000111 | D2–D0 |
+| 0AH | 08H | 03H | 10 + 8 − 3 = 15 | 0FH / 00001111 | D3–D0 |
+| 14H | 0AH | 05H | 20 + 10 − 5 = 25 | 19H / 00011001 | D4, D3, D0 |
+
+The five-instruction sample takes **28 microcycles**, approximately **7 seconds at 4 Hz**, excluding browser scheduling delays. At 1 Hz it takes about 28 seconds. Step instruction animates the remaining cycles of one instruction; Clock advances just one cycle.
+
+If execution keeps repeating, pause and check the loaded RAM, not just the draft: addresses 00–04 must contain **09, 1A, 2B, EF, FF**. Click Instruction template and Load program if necessary. If entering a program manually, include the instructions as well as the data. A missing HLT allows the PC to wrap from F to 0; the safety limit pauses Run after 256 instructions. Reload edits before executing them.
 
 ## Source map
 
@@ -112,9 +134,9 @@ Customize the palette through the `:root` CSS variables in `src/styles.css`: `--
 - `src/simulator/playback.ts`: playback reducer, safety limits and trace.
 - `src/App.tsx`: editor state, timer lifecycle and controls.
 - `src/components/`: architecture diagram, RAM editor, output and trace.
-- `src/styles.css`: responsive visual design.
-- `docs/DEMO.md`: three-case recording walkthrough.
-- `docs/superpowers/`: design, implementation plan and verification notes.
+- `src/styles.css`: base layout and responsive styling.
+- `src/hardware.css`: light blue/pink palettes, CSS board geometry and green LEDs.
+- `tests/simulator.spec.ts`: browser workflows, arithmetic history, LED latching and mobile overflow checks.
 
 ## Suggested five-member responsibilities
 
@@ -128,6 +150,70 @@ These are suggested roles, not claims of authorship. Each group member should un
 
 ## Submission
 
-The [silent demonstration video](docs/demo/three-calculations.webm) shows all three required calculations using values entered through the interface. See [the walkthrough](docs/DEMO.md) to add your group's explanation or regenerate the recording.
 
-The source is ready for your group's GitHub repository. Create the repository under the intended account and push this project; no remote repository has been published automatically. Review the design assumptions against your Unit 2 notes. Use `docs/DEMO.md` for your group's presentation and explanation.
+The source is ready for your group's GitHub repository. Create the repository under the intended account and push this project; no remote repository has been published automatically. Review the design assumptions against your Unit 2 notes.
+
+
+## Complete setup on another computer
+
+1. Install a Node.js version supported by `package.json` and npm.
+2. Clone your repository, or extract the submitted source ZIP, and open a terminal in the folder containing `package.json`.
+3. Run `npm ci` to install the exact dependencies from `package-lock.json`.
+4. Run `npm run dev` and open the URL printed in the terminal.
+5. Open **Tutorial & reference** for the built-in usage, architecture and instruction guide. Use Clock to explain individual transfers and Run to demonstrate a complete calculation.
+6. Stop the development server with Ctrl+C. For a production check, run `npm run build`, then `npm run preview` and open its printed URL.
+
+Internet access is needed to install dependencies initially. No API keys or environment variables are required. Keep `package-lock.json` in the submission so the dependencies can be reproduced.
+
+### Command reference
+
+| Command | Purpose |
+| --- | --- |
+| `npm ci` | Install the locked dependencies; requires the supplied lockfile |
+| `npm run dev` | Start the local development server |
+| `npm run build` | Type-check and generate the production site in `dist/` |
+| `npm run preview` | Serve the existing production build locally |
+| `npm test` | Run simulator unit tests once |
+| `npm run test:watch` | Re-run unit tests during development |
+| `npm run test:e2e` | Run Playwright browser workflows |
+
+### Troubleshooting setup and execution
+
+| Symptom | Action |
+| --- | --- |
+| `npm` is not recognized | Install Node.js and reopen the terminal. Check `node --version` and `npm --version`. |
+| Dependency installation fails | Check the supported Node version and network connection, then run `npm ci` again. |
+| Port 5173 is occupied | Use the actual Local URL printed by Vite. Browser tests use their configured port. |
+| Preview does not show the latest edits | Run `npm run build` again before `npm run preview`. |
+| Browser tests cannot find a browser | Run `npx playwright install chromium`, or select installed Edge as described above. |
+| Result does not change after editing | Click Load program to apply the draft, then Run. |
+| Output stays zero during arithmetic | OUT must execute before the output register changes. Check A for intermediate results. |
+| A subtraction produces a large byte | Arithmetic wraps modulo 256; for example 00H minus 01H becomes FFH. |
+| Progress is slow | Increase Clock speed. At 0.5 Hz each microcycle takes about two seconds. |
+
+## Repository safety and professor review
+
+Commit the application source, tests, scripts, HTML entry point, package manifest and lockfile, TypeScript/Vite/Playwright configuration, README, and relevant demonstration documentation. Record a demonstration separately if required by your professor.
+
+The `.gitignore` excludes dependency folders, generated builds, test reports, coverage, caches, temporary recordings, local editor/assistant settings, environment files, cloud credential folders and common private-key files. Do not put passwords or tokens in source files. If an example environment file is ever needed, use placeholder values only in `.env.example`.
+
+Ignoring a file does **not** remove an already tracked file or delete earlier copies from Git history. Before submitting, inspect the actual staged changes:
+
+```powershell
+git status --short
+git diff --check
+git diff --cached --stat
+git diff --cached
+```
+
+Stage the intended project files, review them, then commit. Keep design and verification notes accurate; review any assignment-specific documentation against your professor's submission requirements. Do not claim tests or demonstrations were run unless you ran them.
+
+Suggested final verification:
+
+```powershell
+npm test
+npm run build
+npm run test:e2e
+```
+
+Confirm all three sample outputs, demonstrate Clock and Step instruction, explain the fetch sequence and OUT latch, and check the submitted repository can be installed using `npm ci`. Include your actual group names, course details and repository URL if required by the assignment. This guide does not assert that those submission-specific details have been provided.

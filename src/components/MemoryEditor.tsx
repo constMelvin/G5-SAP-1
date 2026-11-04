@@ -58,7 +58,7 @@ export default function MemoryEditor({
       <p className="memory-hint">
         Hex bytes, 8 binary bits, or instructions.
         <br />
-        Template: enter your data at 09, 0A and 0B.
+        Default data: 25H, 05H, 23H at 09, 0A and 0B. Edit as needed.
       </p>
       <table className="memory-table">
         <thead>

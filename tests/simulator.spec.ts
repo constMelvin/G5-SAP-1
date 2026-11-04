@@ -98,3 +98,21 @@ test("alternative operands produce a different real result", async ({
   await expect(page.getByTestId("cpu-status")).toHaveText("Halted");
   await expect(page.getByTestId("output-hex")).toHaveText("15");
 });
+
+test("live calculation history preserves arithmetic and LEDs latch only on OUT", async ({ page }) => {
+  await loadSample(page);
+  for (let index = 0; index < 3; index++) {
+    await page.getByRole("button", { name: "Step instruction" }).click();
+    await expect(page.getByTestId("instruction-count")).toHaveText(String(index + 1));
+  }
+  const history = page.locator(".calculation-history");
+  await expect(history).toContainText("25 + 05");
+  await expect(history).toContainText("2A");
+  await expect(history).toContainText("23");
+  await expect(page.getByTestId("output-hex")).toHaveText("00");
+  await expect(page.locator(".led.on")).toHaveCount(0);
+  await page.getByRole("button", { name: "Step instruction" }).click();
+  await expect(page.getByTestId("output-hex")).toHaveText("07");
+  await expect(page.locator(".led-state.lit")).toHaveCount(3);
+  await expect(history).toContainText("Latch output");
+});

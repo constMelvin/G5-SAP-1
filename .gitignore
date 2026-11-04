@@ -1,8 +1,58 @@
+# Dependencies and generated build files
 node_modules/
 dist/
-.superpowers/
-test-results/
-playwright-report/
-*.local
 *.tsbuildinfo
+
+# Browser tests, reports and temporary recordings
+test-results/
+test-results-*/
+playwright-report/
+playwright/.cache/
 docs/demo/.recording/
+
+# Local agent tooling (not required to run the simulator)
+.superpowers/
+.agents/
+skills-lock.json
+
+# Local configuration and secrets
+*.local
+.env
+.env.*
+!.env.example
+
+# Logs and operating-system metadata
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local assistant settings and credentials
+.codex/
+.aws/
+.cursor/
+.claude/
+
+# Test coverage and tool caches
+coverage/
+.vite/
+.cache/
+.npm/
+.eslintcache
+
+# Editor settings and recovery files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Private keys and certificate bundles (never commit credentials)
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Temporary files and local archives
+*.tmp
+*.temp

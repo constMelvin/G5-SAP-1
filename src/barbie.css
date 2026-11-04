@@ -1,0 +1,32 @@
+/* Dream-studio finish, scoped to the pink workspace. */
+:root[data-design="pink"] .dream-token{display:grid;place-items:center;color:#fff5fc;width:100%;height:100%}
+:root[data-design="pink"] .board-courier .dream-cameo{width:28px;height:28px;filter:drop-shadow(0 1px 1px #7d174655)}
+.mission-emblem .dream-cameo{width:28px;height:28px}
+.omnitrix-led .barbie-bit-icon .dream-cameo{width:40px;height:40px}
+:root[data-design="pink"] .board-courier .dream-token{color:#c21875;background:#fff0f9;border-radius:50%}
+:root[data-design="pink"] .board-courier>span{background:#fff0f9}
+.barbie-bit-icon{display:none!important}
+:root[data-design="pink"] .omnitrix-led>svg:not(.barbie-bit-icon){display:none}
+:root[data-design="pink"] .omnitrix-led>.barbie-bit-icon{display:block!important}
+:root[data-design="pink"]{--bg:#fff3fa;--panel:#fffafd;--raised:#ffe7f3;--surface-inset:#fff5fb;--line:#edbdd7;--line-soft:#f5dce9;--text:#54243f;--text-soft:#75445f;--muted:#80536c;--primary:#b62472;--primary-hover:#96165b;--accent:#ac2269;--accent-dim:#fce0ef;--rim:#e6b0ce;--border-strong:#be80a2;--shadow:#8f38651a}
+:root[data-design="pink"] body{background:radial-gradient(ellipse at 12% 0%,#ffd8ee,transparent 48%),radial-gradient(ellipse at 95% 100%,#f2dcff,transparent 45%),#fff3fa}
+:root[data-design="pink"] .topbar{border-bottom:1px solid #e9b4d0}
+:root[data-design="pink"] .brand{color:#a31f64;letter-spacing:1px}
+:root[data-design="pink"] .brand-icon{background:#ffe0f0;border-color:#d68db6;border-radius:50%}
+:root[data-design="pink"] .panel{border-color:#e7b7d1;border-radius:16px;box-shadow:0 3px 0 #edc5dc,0 7px 16px #a7427310}
+:root[data-design="pink"] .panel-head{background:linear-gradient(100deg,#fff5fb,#fce4f1);border-bottom-color:#edc5dc}
+:root[data-design="pink"] button{border-radius:12px;border-bottom-width:3px;box-shadow:0 2px 0 #dab0c9,0 4px 8px #a7427314}
+:root[data-design="pink"] .toolbar{background:#fffafd;border-color:#e7b7d1;box-shadow:0 3px 0 #edc5dc}
+:root[data-design="pink"] #architecture .diagram-wrapper{background:radial-gradient(circle,#fff 1px,transparent 2px) 0 0/18px 18px,linear-gradient(145deg,#ffe4f2,#f7e4f6);border:2px solid #cd91b2;box-shadow:3px 5px 0 #e5bad2}
+:root[data-design="pink"] #architecture .register{border:1px solid #d699ba;border-top:3px solid #df85b5;background:linear-gradient(130deg,#fff,#fff0f8);border-radius:10px;box-shadow:2px 4px 0 #e6b7d0}
+:root[data-design="pink"] #architecture .register.active{outline:2px solid #bd397f;box-shadow:0 0 12px #e95fa644}
+:root[data-design="pink"] .chip-wall,:root[data-design="pink"] .chip-pins{opacity:.35}
+:root[data-design="pink"] .board-courier>span{background:linear-gradient(140deg,#f572b4,#af2169);border:2px solid #fff4fa;box-shadow:0 0 0 1px #d78fb5,0 3px 6px #a7427333}
+:root[data-design="pink"] .dream-token{font:bold italic 25px Georgia,serif;text-shadow:1px 1px 0 #801448}
+:root[data-design="pink"] .mission-console{background:linear-gradient(110deg,#fff1f9,#f9e3f1);border-color:#eac0d8;border-radius:12px}
+:root[data-design="pink"] #output{border:1px solid #d699ba;border-bottom:4px solid #dda8c6;border-radius:18px;box-shadow:0 5px 12px #a7427314}
+:root[data-design="pink"] #output .output-body{background:linear-gradient(145deg,#fff8fc,#fbe5f2);border:1px solid #e0a9c7;border-radius:14px;box-shadow:inset 0 1px 0 #fff}
+:root[data-design="pink"] #output .big-output{border:1px solid #dda8c6;border-radius:12px;background:#fffafd;box-shadow:inset 0 2px 5px #ad447317;text-shadow:none}
+:root[data-design="pink"] #output .led-row{background:transparent;box-shadow:none}
+:root[data-design="pink"] .memory-table input{border-color:#e7bfd5;border-radius:6px;background:#fff9fd}
+:root[data-design="pink"] .signal.on{background:#b62472;color:white;border-color:#96165b}
