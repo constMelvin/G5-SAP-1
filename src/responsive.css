@@ -373,3 +373,104 @@
  overflow:auto;
 }
 .workbench .sequencer-panel .stats { margin-top:auto; }
+/* Phone workspace: readable controls and a single natural page flow. */
+@media(max-width:600px) {
+ html,body,#root { height:auto; overflow-x:clip; overflow-y:visible; }
+ .app { display:block; height:auto !important; max-height:none; min-height:100dvh; padding:8px; overflow:visible !important; }
+ .app>.topbar { display:flex; flex-wrap:wrap; height:auto; min-height:0; gap:8px; padding-bottom:8px; margin-bottom:8px; }
+ .brand { flex:1 0 100%; font-size:13px; }
+ .compact-themes { display:flex; margin:0; gap:6px; }
+ .compact-themes button { min-height:36px; padding:7px 12px; }
+ .topbar .header-reference { margin-left:auto; }
+ .topbar .header-reference summary { min-height:36px; height:auto; font-size:10px; }
+ .header-reference-content { position:fixed; top:115px; left:8px; right:8px; width:auto; max-width:none; max-height:calc(100dvh - 135px); }
+ .toolbar { display:flex; flex-wrap:wrap; padding:9px; gap:10px; margin:0 0 10px; }
+ .toolbar .control-group { width:100%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+ .toolbar .control-group button { width:100%; min-height:40px; justify-content:center; font-size:11px; }
+ .toolbar .separator,.toolbar .control-hint { display:none; }
+ .toolbar .speed { margin:0; flex:1; min-width:0; flex-wrap:wrap; font-size:10px; }
+ .toolbar .speed input { width:90px; }
+ .toolbar .speed output { font-size:9px; }
+ .toolbar>.status { margin:0; font-size:10px; }
+ .workbench { display:flex !important; flex-direction:column; gap:12px; height:auto !important; overflow:visible !important; }
+ .workbench>#program { order:0; width:100%; flex:none; height:480px; max-height:75dvh; }
+ .workbench>.center-column { order:1; width:100%; display:block; overflow:visible !important; }
+ .workbench>.right-column { order:2; display:flex; flex-direction:column; width:100%; gap:12px; overflow:visible !important; }
+ .workbench .live-signal-strip { margin-bottom:10px; }
+ .live-signal-strip .signals { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:4px; }
+ .live-signal-strip .signal { width:auto; max-width:none; min-height:34px; font-size:9px; }
+ :root[data-design] #architecture .architecture-stage { padding:32px 8px 20px !important; }
+ :root[data-design] #architecture .diagram-wrapper { height:auto !important; padding:14px 10px 10px !important; }
+ :root[data-design] #architecture .diagram { height:auto !important; grid-template-rows:repeat(4,112px) !important; row-gap:14px !important; grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) !important; }
+ :root[data-design] #architecture .register { padding:6px !important; margin:0 !important; gap:5px !important; }
+ :root[data-design] #architecture .register-top { font-size:10px; line-height:1.3; }
+ :root[data-design] #architecture .register-top b { font-size:9px; padding:1px 3px; }
+ :root[data-design] #architecture .register-value { font-size:19px; padding:4px; }
+ :root[data-design] #architecture .register-binary { font-size:9px; letter-spacing:0; padding:2px 0; }
+ #architecture .board-caption { font-size:8px; padding:8px; gap:5px; flex-wrap:wrap; }
+ #architecture .bus-legend { font-size:8px; gap:6px; }
+ :root[data-design] #output { transform:none; width:100%; margin:0; }
+ :root[data-design] #output .output-body { max-width:none; padding:12px; margin:8px; }
+ .workbench>.right-column>.sequencer-panel { flex:none !important; height:250px; }
+}
+/* Compact tutorial trigger styled directly on summary to match theme buttons. */
+.compact-themes button,
+.topbar .header-reference summary {
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:5px;
+ box-sizing:border-box;
+ min-height:28px;
+ height:28px;
+ padding:0 12px;
+ margin:0;
+ border:1px solid var(--line);
+ border-radius:8px;
+ background:linear-gradient(#fff,var(--raised));
+ color:var(--text);
+ box-shadow:0 1px 2px var(--shadow);
+ font:600 10px/1.2 var(--display);
+ white-space:nowrap;
+ transition:background .15s,color .15s,box-shadow .15s;
+}
+:root[data-design="pink"] .compact-themes button,
+:root[data-design="pink"] .topbar .header-reference summary {
+ border-radius:12px;
+}
+.compact-themes button[aria-pressed="true"],
+:root[data-design="pink"] .compact-themes button[aria-pressed="true"] {
+ border-color:var(--primary);
+ background:var(--primary);
+ color:var(--on-primary);
+}
+.compact-themes button:not([aria-pressed="true"]):hover,
+.topbar .header-reference summary:hover {
+ border-color:var(--line);
+ background:var(--accent-dim);
+ color:var(--text);
+ box-shadow:0 1px 3px var(--shadow);
+}
+.topbar .header-reference,
+:root[data-design="pink"] .topbar .header-reference {
+ display:block;
+ align-self:center;
+ flex:0 0 auto;
+ margin:0;
+ padding:0;
+ height:auto;
+ min-height:0;
+ max-width:100%;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ box-shadow:none;
+ overflow:visible;
+}
+.topbar .header-reference summary>svg { flex-shrink:0; width:12px; height:12px; }
+@media(max-width:600px) {
+ .compact-themes button,
+ .topbar .header-reference summary { min-height:36px; height:36px; padding:0 12px; font-size:10px; }
+ .topbar .header-reference,
+ :root[data-design="pink"] .topbar .header-reference { margin-left:auto; }
+}
