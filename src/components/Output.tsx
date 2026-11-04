@@ -1,3 +1,4 @@
+import Sequencer from "./Sequencer";
 import { Lightbulb } from "lucide-react";
 import DreamIcon from "./DreamIcon";
 import { binary, hex, type CpuState } from "../simulator/cpu";
@@ -69,6 +70,8 @@ export default function Output({ cpu }: { cpu: CpuState }) {
           </p>
         </div>
       </section>
+      <Sequencer cpu={cpu} />
     </aside>
   );
 }
+

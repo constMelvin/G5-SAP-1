@@ -15,3 +15,5 @@ import "./output-signals.css";
 import "./barbie.css";
 import "./tutorial.css";
 import "./controls.css";
+import "./components/ChipBoard3D.css";
+import "./responsive.css";

@@ -1,9 +1,9 @@
-import { Flag, CircuitBoard, Radio } from "lucide-react";
+import CharacterHead from "./CharacterHead";
+import { CircuitBoard, Radio } from "lucide-react";
 import type { CSSProperties } from "react";
 import DreamIcon from "./DreamIcon";
 import {
   binary,
-  decode,
   hex,
   type ComponentId,
   type CpuState,
@@ -119,6 +119,10 @@ export default function Architecture({ cpu, design, speed }: { cpu: CpuState; de
             </span>
           ))}
         </div>
+          <div className="mission-console">
+            <span className="mission-emblem" aria-hidden="true">{pink ? <DreamIcon /> : "10"}</span>
+            <div><span className="mission-kicker">{pink ? "DREAM STUDIO / LIVE STORY" : "MISSION CONTROL / LIVE STORY"}</span><h3>{cpu.error ? "Check your program" : cpu.halted ? "Mission accomplished" : !cpu.clocks ? "Ready for your first move" : cpu.phase <= 2 ? "Find the next instruction" : cpu.phase === 3 ? "Read the instruction" : "Carry out the instruction"}</h3><p>{cpu.bus ? `${(pink ? DREAM_STATIONS : STATIONS)[cpu.bus.source]} (${cpu.bus.source}) sends ${hex(cpu.bus.value)}H to ${(pink ? DREAM_STATIONS : STATIONS)[cpu.bus.target]} (${cpu.bus.target}).` : cpu.error ? cpu.error : cpu.halted ? "The CPU reached HLT. Your output stays visible until Reset." : cpu.clocks ? cpu.description : "Load your program, then use Clock for one move or Run for the full journey."}</p></div>
+          </div>
       </section>
       <section
         className="panel"
@@ -138,7 +142,12 @@ export default function Architecture({ cpu, design, speed }: { cpu: CpuState; de
         <div className="board-edge board-edge-right" aria-hidden="true" />
         <div className="diagram-wrapper">
           <div className="diagram">
-            <div key={cpu.clocks} className={"board-courier " + (cpu.bus ? "travelling" : "") + (cpu.halted ? " courier-stopped" : "")} style={{ ...journeyStyle, animationDuration: `${Math.min(.8, .8 / speed)}s` }} aria-hidden="true"><span>{cpu.halted && !cpu.error ? <Flag /> : pink ? <span className="dream-token"><DreamIcon /></span> : <svg className="omnitrix-token" viewBox="0 0 48 48"><path d="M17 2h14l3 10v24l-3 10H17l-3-10V12Z" fill="#263932" stroke="#0b1812" strokeWidth="2"/><circle cx="24" cy="24" r="19" fill="#111d17" stroke="#82988a" strokeWidth="2"/><circle cx="24" cy="24" r="14" fill="#a2f43e" stroke="#d8ff9a" strokeWidth="2"/><path d="M14 13h20L27 24l7 11H14l7-11Z" fill="#142018"/><path d="M16 10a16 16 0 0 1 16 0" fill="none" stroke="#ffffff" strokeOpacity=".6" strokeWidth="2"/><g fill="#b5ff62"><circle cx="24" cy="6" r="2"/><circle cx="42" cy="24" r="2"/><circle cx="24" cy="42" r="2"/><circle cx="6" cy="24" r="2"/></g></svg>}</span><small>{cpu.bus ? hex(cpu.bus.value) + "H" : cpu.halted ? (cpu.error ? "ERROR" : "DONE") : pink ? "DREAM" : "HERO"}</small></div>
+            <svg className="chip-roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path className="road-bed" d="M50 2V77 M25 2H75 M25 27H75 M25 52H75 M25 77H75" />
+              <path className="road-lanes" d="M50 2V77 M25 2H75 M25 27H75 M25 52H75 M25 77H75" />
+              {cpu.bus && <path className="road-transfer" d={`M${sx} ${sy * 25 + 2} H50 V${ty * 25 + 2} H${tx}`} />}
+            </svg>
+            <div key={cpu.clocks} className={"board-courier " + (cpu.bus ? "travelling" : "") + (cpu.halted ? " courier-stopped" : "")} style={{ ...journeyStyle, "--walk-duration": `${Math.min(.8, .8 / speed) / 4}s`, animationDuration: `${Math.min(.8, .8 / speed)}s` } as CSSProperties} aria-hidden="true"><span><CharacterHead /></span>{(cpu.bus || cpu.halted) && <small>{cpu.bus ? hex(cpu.bus.value) + "H" : cpu.error ? "ERROR" : "DONE"}</small>}</div>
             <div
               className={"wbus" + (cpu.bus ? " active" : "")}
               aria-hidden="true"
@@ -246,46 +255,13 @@ export default function Architecture({ cpu, design, speed }: { cpu: CpuState; de
           </div>
         </div>
         </div>
-        <div className="cycle-area">
-          <div className="mission-console">
-            <span className="mission-emblem" aria-hidden="true">{pink ? <DreamIcon /> : "10"}</span>
-            <div><span className="mission-kicker">{pink ? "DREAM STUDIO / LIVE STORY" : "MISSION CONTROL / LIVE STORY"}</span><h3>{cpu.error ? "Check your program" : cpu.halted ? "Mission accomplished" : !cpu.clocks ? "Ready for your first move" : cpu.phase <= 2 ? "Find the next instruction" : cpu.phase === 3 ? "Read the instruction" : "Carry out the instruction"}</h3><p>{cpu.bus ? `${(pink ? DREAM_STATIONS : STATIONS)[cpu.bus.source]} (${cpu.bus.source}) sends ${hex(cpu.bus.value)}H to ${(pink ? DREAM_STATIONS : STATIONS)[cpu.bus.target]} (${cpu.bus.target}).` : cpu.error ? cpu.error : cpu.halted ? "The CPU reached HLT. Your output stays visible until Reset." : cpu.clocks ? cpu.description : "Load your program, then use Clock for one move or Run for the full journey."}</p></div>
-          </div>
-          <div className="cycle-header">
-            <span>CONTROLLER / SEQUENCER</span>
-            <b>{cpu.clocks >= 3 ? decode(cpu.ir) : "AWAITING FETCH"}</b>
-          </div>
-          <div className="cycles">
-            {[1, 2, 3, 4, 5, 6].map((phase) => (
-              <div
-                key={phase}
-                className={"cycle" + (cpu.phase === phase ? " active" : "")}
-                aria-current={cpu.phase === phase ? "step" : undefined}
-              >
-                T{phase}
-              </div>
-            ))}
-          </div>
-          <div className="cycle-labels">
-            <span>FETCH</span>
-            <span>EXECUTE</span>
-          </div>
-          <p className="micro-description">{cpu.description}</p>
-        </div>
-        <div className="stats">
-          <span>
-            <b data-testid="instruction-count">{cpu.instructions}</b>
-            instructions
-          </span>
-          <span>
-            <b>{cpu.clocks}</b>clock pulses
-          </span>
-          <span>
-            PC <b>{hex(cpu.pc, 1)}H</b>
-          </span>
-        </div>
       </section>
 
     </div>
   );
 }
+
+
+
+
+
