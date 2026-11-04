@@ -60,7 +60,7 @@ export default function MemoryEditor({
         <br />
         Default data: 25H, 05H, 23H at 09, 0A and 0B. Edit as needed.
       </p>
-      <table className="memory-table">
+      <div className="memory-table-scroll" tabIndex={0} aria-label="Memory values"><table className="memory-table">
         <thead>
           <tr>
             <th scope="col">ADDR</th>
@@ -101,7 +101,7 @@ export default function MemoryEditor({
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
       <div className="memory-foot">
         <div className="draft-state">
           <span className={dirty ? "dirty" : ""}>
@@ -122,3 +122,4 @@ export default function MemoryEditor({
     </section>
   );
 }
+
