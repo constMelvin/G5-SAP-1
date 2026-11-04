@@ -1,10 +1,10 @@
 # SAP-1 Workbench
 
-A graphical SAP-1 computer simulator for Computer Architecture and Organization. Built from the supplied project brief with React, TypeScript and Vite.
+A graphical SAP-1 computer simulator for Computer Architecture and Organization. Built with React, TypeScript and Vite.
 
 ## Run locally
 
-Use **Node.js 24 LTS** and npm (Node 22.12+ is also supported).
+Use **Node.js 24** and npm. The supported Node ranges in `package.json` are `^22.12.0 || ^24.0.0 || >=26.0.0`.
 
 ```powershell
 npm ci
@@ -20,7 +20,7 @@ npm run preview
 npm test
 ```
 
-Build output is in `dist/`. Preview serves the production build. Simulation runs entirely in the browser; no database, server API or account is required. Google Fonts is optional visual enhancement; local fonts are used if unavailable. Programs are session-only and are cleared on browser refresh.
+Build output is in `dist/`. Preview serves the production build. Simulation runs entirely in the browser; no database, server API or account is required. Google Fonts is optional visual enhancement; local fonts are used if unavailable. The draft starts with the sample program, but it must be loaded before execution. Loaded memory, edits, registers and theme selection are not persisted across page refreshes. No API keys or environment variables are required.
 
 ## First calculation
 
@@ -30,7 +30,7 @@ Build output is in `dist/`. Preview serves the production build. Simulation runs
    - 02: SUB BH
    - 03: OUT
    - 04: HLT
-2. Enter **25H**, **05H**, **23H** at addresses **09**, **0A**, **0B**.
+2. Verify the prefilled data: **25H**, **05H**, **23H** at addresses **09**, **0A**, **0B**. No additional entry is needed for the sample.
 3. Click **Load program**. Verify RAM shows 25, 05, 23.
 4. Click **Run**, or use **Clock** and **Step instruction**.
 5. At HLT the output is **07H**, binary **00000111**.
@@ -51,7 +51,7 @@ The template preloads 25H, 05H and 23H at 09, 0A and 0B. Edit these values in th
 
 Bare numbers are **hexadecimal**, not decimal. Accepted examples: `25`, `25H`, `0x25`, `00100101`, `0010 0101`, `0b00100101`, `LDA 9H`. Blank cells become 00. Binary requires exactly eight bits. Instruction addresses range from 0 to F. The RAM column always shows what the CPU will execute; edits do not apply until loaded. Validation failures preserve the current RAM and CPU state.
 
-Run pauses after 256 instructions to make missing-HLT programs manageable; pressing Run resumes. Trace retains the latest 80 microcycles. Unknown opcodes halt with an explanatory error.
+Each Run pauses after up to 256 additional instructions to make missing-HLT programs manageable; pressing Run resumes. Unknown opcodes halt with an explanatory error.
 
 ## Architecture and timing assumptions
 
@@ -71,9 +71,9 @@ Run pauses after 256 instructions to make missing-HLT programs manageable; press
 | OUT         | 1110   | T4 A→OUT                              |
 | HLT         | 1111   | Stop at T4                            |
 
-Each instruction fetches using T1 PC→MAR, T2 increment PC, T3 RAM→IR. Ordinary instructions occupy six T states, with unused states idle. HLT completes at T4. OUT/HLT ignore the operand nibble; their mnemonic encodings are EF/FF, matching the assignment sample.
+Each instruction fetches using T1 PC→MAR, T2 increment PC, T3 RAM→IR. Ordinary instructions occupy six T states, with unused states idle. HLT completes at T4. OUT/HLT ignore the operand nibble; their mnemonic encodings are EF/FF, as defined by the program parser.
 
-The supplied brief references Unit 2, but that teaching material was not provided. This explicit six-state timing model is an implementation assumption. Control labels represent **logical assertions**, not physical active-low pin voltage. This is a register-transfer simulator, not a gate-level electronics model.
+The simulator uses the six-state timing model described above. Register values show the state after the displayed T state completes. Control labels represent **logical assertions**, not physical active-low pin voltage. Arithmetic retains eight bits; no carry or overflow flags are modeled.
 
 ## Why this stack?
 
@@ -97,21 +97,23 @@ $env:PLAYWRIGHT_CHANNEL = 'msedge'
 npm run test:e2e
 ```
 
-Tests launch Vite automatically unless it is already serving port 5173. Failure traces and screenshots are saved in ignored `test-results/`. Custom `test-results-*` directories and `playwright-report/` are ignored too. Browser tests include live arithmetic history and confirm that LEDs latch only on OUT.
+Playwright starts Vite on port 5173 or reuses a server at the configured URL. Failure traces and explicitly captured desktop/mobile screenshots are saved in ignored `test-results/`.
+
+**Browser test maintenance:** `tests/simulator.spec.ts` still contains a calculation-history test and a mobile heading assertion for UI elements that are no longer rendered. These checks need updating before the full browser suite can serve as a reliable verification of the current interface.
 
 ## Interface and themes
 
-Choose **Sky Blue** (default) or **Rose Pink**. Both are light themes; changing the palette preserves your loaded program, registers and playback. The architecture uses a fixed CSS perspective board with visible chip sides, edge pins and highlighted W-Bus transfers. It is a browser-based register-transfer visualization with CSS depth effects, not a rotatable WebGL or gate-level electronics model.
+Choose **Ben 10** (default) or **Barbie** using the header buttons. Both use light workspace palettes, with a dark output display in Ben 10. Changing themes preserves your loaded program, registers and playback. Internally, the themes use the `blue` and `pink` design keys.
 
-- Graphical PC, MAR, RAM, IR, accumulator, ALU, B and output modules display live values.
-- Raised native buttons provide Run/Pause, Step instruction, Clock, Reset and Load program.
-- Eight green output LEDs show bits D7 through D0, left to right, with binary values and ON/OFF labels. Read the bit values and ON/OFF labels to distinguish each output state.
-- The live calculation panel shows the latest ADD/SUB, plus the accumulator in hexadecimal, decimal and binary.
-- Calculation history lists arithmetic and OUT events within the latest **80 clocks** of the current run. Older events expire; Reset, Load and page refresh clear the history.
-- Output LEDs latch only when **OUT** executes. Intermediate arithmetic changes the accumulator without changing the output LEDs.
-- A three-step guide, section navigation and sticky desktop controls help navigation. Mobile layouts stack the panels; keyboard focus, input error messages and reduced-motion support are included.
+- Graphical PC, MAR, RAM, IR, accumulator, ALU, B and output modules display live values. Highlighted W-Bus transfers and a moving character token show bytes travelling between modules.
+- The architecture is a browser-based register-transfer visualization with CSS chip sides, edge pins and depth effects. The compact desktop layout flattens the board to fit the workspace; it is not a rotatable WebGL or gate-level electronics model.
+- Native buttons provide Run/Pause, Step instruction, Clock, Reset and Load program.
+- Eight themed output icons show bits **D7 through D0**, left to right. **Green means 1 / ON; red means 0 / OFF** in both themes. Binary values and ON/OFF labels distinguish states without relying only on color. The output also shows hexadecimal, decimal and signed decimal values.
+- Output icons latch only when **OUT** executes. Intermediate arithmetic changes the accumulator without changing the output. Reset or loading a program clears the output register.
+- A live story panel explains the current transfer or execution phase, while control signals and cycle indicators help follow instruction timing. Register values are shown in hexadecimal and binary.
+- **Tutorial & reference** provides How to use, How it works and Instructions tabs. On large desktops, controls remain above independently scrolling workbench columns. Smaller layouts stack the panels; keyboard focus, input error messages and reduced-motion support are included.
 
-`src/styles.css` defines the base layout. `src/hardware.css`, loaded afterward, defines the light palettes, depth effects and LEDs. Customize its semantic CSS variables such as `--primary`, `--accent`, `--bg` and `--panel`. The pink palette overrides the default blue tokens through `:root[data-design="pink"]`; output LEDs stay green independently of the palette.
+`src/styles.css` defines the base layout. Styles load afterward in this order: `src/hardware.css`, `src/components/BoardQuest.css`, `src/compact.css`, `src/output-signals.css`, `src/barbie.css`, `src/tutorial.css` and `src/controls.css`. Customize semantic variables such as `--primary`, `--accent`, `--bg` and `--panel`, accounting for later overrides. Theme selectors use `:root[data-design="blue"]` and `:root[data-design="pink"]`. `src/output-signals.css` defines the shared green ON / red OFF icon colors; `src/barbie.css` supplies the pink theme's icon artwork.
 
 ## More calculations and troubleshooting
 
@@ -131,41 +133,17 @@ If execution keeps repeating, pause and check the loaded RAM, not just the draft
 
 - `src/simulator/cpu.ts`: pure immutable machine transitions and formatted values.
 - `src/simulator/program.ts`: memory input validation and instruction encoding.
-- `src/simulator/playback.ts`: playback reducer, safety limits and trace.
+- `src/simulator/playback.ts`: playback reducer, safety limits and an internal trace capped at 80 microcycles (not displayed).
 - `src/App.tsx`: editor state, timer lifecycle and controls.
-- `src/components/`: architecture diagram, RAM editor, output and trace.
+- `src/components/`: architecture diagram, RAM editor, output icons, tutorial menu, themed artwork and toast notifications.
 - `src/styles.css`: base layout and responsive styling.
-- `src/hardware.css`: light blue/pink palettes, CSS board geometry and green LEDs.
-- `tests/simulator.spec.ts`: browser workflows, arithmetic history, LED latching and mobile overflow checks.
+- `src/main.tsx`: application entry point and stylesheet import order.
+- `src/hardware.css`: base light palettes and CSS board geometry; later stylesheets customize the themes and layout.
+- `src/output-signals.css` and `src/barbie.css`: output state colors and themed artwork.
+- `src/simulator/*.test.ts`: unit tests for CPU behavior, input parsing and playback.
+- `tests/simulator.spec.ts`: browser workflow tests; see the maintenance note under Tests.
 
-## Suggested five-member responsibilities
-
-1. CPU/microcycles and architecture verification.
-2. Program input and RAM viewer.
-3. Register diagram, bus and signals.
-4. Controls, LEDs, responsive interface and accessibility.
-5. Tests, README, GitHub preparation and demonstration recording.
-
-These are suggested roles, not claims of authorship. Each group member should understand the whole simulator before presenting.
-
-## Submission
-
-
-The source is ready for your group's GitHub repository. Create the repository under the intended account and push this project; no remote repository has been published automatically. Review the design assumptions against your Unit 2 notes.
-
-
-## Complete setup on another computer
-
-1. Install a Node.js version supported by `package.json` and npm.
-2. Clone your repository, or extract the submitted source ZIP, and open a terminal in the folder containing `package.json`.
-3. Run `npm ci` to install the exact dependencies from `package-lock.json`.
-4. Run `npm run dev` and open the URL printed in the terminal.
-5. Open **Tutorial & reference** for the built-in usage, architecture and instruction guide. Use Clock to explain individual transfers and Run to demonstrate a complete calculation.
-6. Stop the development server with Ctrl+C. For a production check, run `npm run build`, then `npm run preview` and open its printed URL.
-
-Internet access is needed to install dependencies initially. No API keys or environment variables are required. Keep `package-lock.json` in the submission so the dependencies can be reproduced.
-
-### Command reference
+## Command reference
 
 | Command | Purpose |
 | --- | --- |
@@ -177,7 +155,7 @@ Internet access is needed to install dependencies initially. No API keys or envi
 | `npm run test:watch` | Re-run unit tests during development |
 | `npm run test:e2e` | Run Playwright browser workflows |
 
-### Troubleshooting setup and execution
+## Troubleshooting
 
 | Symptom | Action |
 | --- | --- |
@@ -190,30 +168,3 @@ Internet access is needed to install dependencies initially. No API keys or envi
 | Output stays zero during arithmetic | OUT must execute before the output register changes. Check A for intermediate results. |
 | A subtraction produces a large byte | Arithmetic wraps modulo 256; for example 00H minus 01H becomes FFH. |
 | Progress is slow | Increase Clock speed. At 0.5 Hz each microcycle takes about two seconds. |
-
-## Repository safety and professor review
-
-Commit the application source, tests, scripts, HTML entry point, package manifest and lockfile, TypeScript/Vite/Playwright configuration, README, and relevant demonstration documentation. Record a demonstration separately if required by your professor.
-
-The `.gitignore` excludes dependency folders, generated builds, test reports, coverage, caches, temporary recordings, local editor/assistant settings, environment files, cloud credential folders and common private-key files. Do not put passwords or tokens in source files. If an example environment file is ever needed, use placeholder values only in `.env.example`.
-
-Ignoring a file does **not** remove an already tracked file or delete earlier copies from Git history. Before submitting, inspect the actual staged changes:
-
-```powershell
-git status --short
-git diff --check
-git diff --cached --stat
-git diff --cached
-```
-
-Stage the intended project files, review them, then commit. Keep design and verification notes accurate; review any assignment-specific documentation against your professor's submission requirements. Do not claim tests or demonstrations were run unless you ran them.
-
-Suggested final verification:
-
-```powershell
-npm test
-npm run build
-npm run test:e2e
-```
-
-Confirm all three sample outputs, demonstrate Clock and Step instruction, explain the fetch sequence and OUT latch, and check the submitted repository can be installed using `npm ci`. Include your actual group names, course details and repository URL if required by the assignment. This guide does not assert that those submission-specific details have been provided.
